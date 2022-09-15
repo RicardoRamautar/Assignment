@@ -16,13 +16,15 @@ CAN_SYMBOL * dec_to_bin(int number) {
 
     if (number == 0) {
         CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc(sizeof(CAN_SYMBOL));
-        binary[0] = DOMINANT;
+        binary[0] = 1;
+        binary[1] = DOMINANT;
         return binary;
     }
 
     if (number == 1) {
         CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc(sizeof(CAN_SYMBOL));
-        binary[0] = RECESSIVE;
+        binary[0] = 1;
+        binary[1] = RECESSIVE;
         return binary;
     }
 
@@ -38,15 +40,17 @@ CAN_SYMBOL * dec_to_bin(int number) {
     }
     printf("\n");
 
-    CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc((i-1)*sizeof(CAN_SYMBOL));
+    CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc(i*sizeof(CAN_SYMBOL));
 
     int bit = 0;
 
+    binary[0] = i;
+
     for (int j = 0; j < i; j++) {
         if(temp[j] == 0) {
-            binary[i - j - 1] = DOMINANT;
+            binary[i - j] = DOMINANT;
         } else {
-            binary[i - j - 1] = RECESSIVE;
+            binary[i - j] = RECESSIVE;
         }
     }
     printf("\n");
@@ -56,14 +60,14 @@ CAN_SYMBOL * dec_to_bin(int number) {
 
 void printFromPointer(CAN_SYMBOL * pointer) {
     printf("Array from pointer : ");
-    for(int i = 0; i < 4; i++) {
+    int size = *pointer;
+    for(int i = 1; i <= size; i++) {
         printf("%d - ", *(pointer + i));
     }
     printf("\n");
 }
 
 int main() {
-    CAN_SYMBOL * res = dec_to_bin(15);
+    CAN_SYMBOL * res = dec_to_bin(10);
     printFromPointer(res);
-
 }
