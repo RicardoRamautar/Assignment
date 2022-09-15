@@ -74,7 +74,7 @@ void printFromPointer(CAN_SYMBOL * pointer) {
 }
 
 int WinMain() {
-    CAN_SYMBOL * res1 = dec_to_bin(40);
+    CAN_SYMBOL * res1 = dec_to_bin(52);
     printf("First array : ");
     printFromPointer(res1);
     CAN_SYMBOL * res2 = dec_to_bin(2);

@@ -46,9 +46,30 @@ CAN_SYMBOL * dec_to_bin(uint64_t number) {
 void printFromPointer(CAN_SYMBOL * pointer) {
     int size = *pointer;
     for(int i = 1; i <= size; i++) {
-        printf("%d - ", *(pointer + i));
+        printf("%d", *(pointer + i));
     }
     printf("\n");
+}
+
+CAN_SYMBOL * concatenate_binary(CAN_SYMBOL * bin1, CAN_SYMBOL * bin2) {
+    int size_bin1 = *bin1;
+    int size_bin2 = *bin2;
+
+    size_t new_size = size_bin1 + size_bin2 + 1;
+
+    CAN_SYMBOL * bin = (CAN_SYMBOL *) realloc(bin1, new_size);
+
+    bin[0] = new_size-1;
+
+    int j = 1;
+    for(int i = size_bin1+1; i < new_size; i++) {
+        bin[i] = *(bin2 + j);
+        j++;
+    }
+
+    // FREE MEMORY ALLOCATED TO BIN2
+
+    return bin;
 }
 
 void can_max_tx_frame(CAN_FRAME* txFrame)
@@ -56,9 +77,23 @@ void can_max_tx_frame(CAN_FRAME* txFrame)
     uint64_t id = txFrame->ID;
     uint64_t dlc = txFrame->DLC;
     uint64_t data = txFrame->Data;
-    uint64_t CRC = txFrame->CRC;
+    uint64_t crc = txFrame->CRC;
 
+    printFromPointer(dec_to_bin(id));
+    printFromPointer(dec_to_bin(dlc));
+    printFromPointer(dec_to_bin(data));
+    printFromPointer(dec_to_bin(crc));
 
+    CAN_SYMBOL* id_bin = dec_to_bin(id);
+    CAN_SYMBOL* dlc_bin = dec_to_bin(dlc);
+    CAN_SYMBOL* data_bin = dec_to_bin(data);
+    CAN_SYMBOL* crc_bin = dec_to_bin(crc);
+    CAN_SYMBOL* res =  concatenate_binary(id_bin, dlc_bin);
+    printFromPointer(res);
+    CAN_SYMBOL* res2 =  concatenate_binary(res, data_bin);
+    printFromPointer(res2);
+    CAN_SYMBOL* res3 =  concatenate_binary(res2, crc_bin);
+    // printFromPointer(res3);
 }
 
 int WinMain() {
