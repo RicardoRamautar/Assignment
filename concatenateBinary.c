@@ -81,31 +81,15 @@ void printFromPointer(CAN_SYMBOL * pointer) {
     printf("\n");
 }
 
-void can_max_tx_frame(CAN_FRAME* txFrame)
-{
-    int id = txFrame->ID;
-    int dlc = txFrame->DLC;
-    int data = txFrame->Data;
-    int CRC = txFrame->CRC;
-
-    
-}
-
 int WinMain() {
-    CAN_FRAME frame = {10,20,43,52};
-    CAN_FRAME * frame_pointer = &frame;
-    can_max_tx_frame(frame_pointer);
+    CAN_SYMBOL * res1 = dec_to_bin(8);
+    printf("First array : ");
+    printFromPointer(res1);
+    CAN_SYMBOL * res2 = dec_to_bin(2);
+    printf("Second array : ");
+    printFromPointer(res2);
+
+    CAN_SYMBOL * res = concatenate_binary(res1, res2);
+    printf("Concatenated array : ");
+    printFromPointer(res);
 }
-
-// int WinMain() {
-//     CAN_SYMBOL * res1 = dec_to_bin(15);
-//     printf("First array : ");
-//     printFromPointer(res1);
-//     CAN_SYMBOL * res2 = dec_to_bin(2);
-//     printf("Second array : ");
-//     printFromPointer(res2);
-
-//     CAN_SYMBOL * res = concatenate_binary(res1, res2);
-//     printf("Concatenated array : ");
-//     printFromPointer(res);
-// }
