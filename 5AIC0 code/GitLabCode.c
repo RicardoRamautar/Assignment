@@ -29,7 +29,8 @@ CAN_SYMBOL * dec_to_bin(uint64_t number) {
         number = number / 2;
     }
 
-    CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc((i+1)*sizeof(CAN_SYMBOL));
+    CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc((i+3)*sizeof(CAN_SYMBOL));           
+    // i+3 instead of i+1, because apparently i was overwriting un-malloced space which caused the free() error
 
     binary[0] = i;
 
@@ -52,44 +53,49 @@ CAN_SYMBOL * concatenate_binary(CAN_SYMBOL * bin1, CAN_SYMBOL * bin2) {
 
     size_t new_size = size_bin1 + size_bin2 + 1;
 
-    CAN_SYMBOL * bin = (CAN_SYMBOL *) realloc(bin1, new_size);
+    CAN_SYMBOL* bin = (CAN_SYMBOL *) malloc((new_size+2)*sizeof(CAN_SYMBOL));
+    // I got a reallocation error, so i decided to just use malloc
 
     bin[0] = new_size-1;
 
+    for(int i=1; i<=size_bin1; i++) {
+        bin[i] = *(bin1 + i);
+    }
+
     int j = 1;
-    for(int i = size_bin1+1; i < new_size; i++) {
-        bin[i] = *(bin2 + j);
+    for(int k = size_bin1+1; k < new_size; k++) {
+        bin[k] = *(bin2 + j);
         j++;
     }
+
+    free(bin2);
+    free(bin1);
 
     return bin;
 }
 
 void printFromPointer(CAN_SYMBOL * pointer) {
-    printf("Array from pointer : ");
     int size = *pointer;
     for(int i = 1; i <= size; i++) {
-        printf("%d - ", *(pointer + i));
+        printf("%d", *(pointer + i));
     }
     printf("\n");
 }
 
-void can_mac_tx_frame(CAN_FRAME* txFrame) 
-{
-    CAN_SYMBOL * bitstream = dec_to_bin(txFrame->ID);
+void can_mac_tx_frame(CAN_FRAME* txFrame){
+    printFromPointer(dec_to_bin(txFrame->ID));
+    printFromPointer(dec_to_bin(txFrame->DLC));
+    printFromPointer(dec_to_bin(txFrame->Data));
+    printFromPointer(dec_to_bin(txFrame->CRC));
 
-    int dlc = txFrame->DLC;
-    CAN_SYMBOL * substream = dec_to_bin(dlc);
-    bitstream = concatenate_binary(bitstream, substream);
-
-    int data = txFrame->Data;
-    CAN_SYMBOL * substream2 = dec_to_bin(data);
-    bitstream = concatenate_binary(bitstream, substream2);
-    bitstream = concatenate_binary(bitstream, dec_to_bin(txFrame->Data));
-    bitstream = concatenate_binary(bitstream, dec_to_bin(txFrame->CRC));
-    
-    printFromPointer(bitstream);
-    
+    CAN_SYMBOL* id_bin = dec_to_bin(txFrame->ID);
+    CAN_SYMBOL* dlc_bin = dec_to_bin(txFrame->DLC);
+    CAN_SYMBOL* data_bin = dec_to_bin(txFrame->Data);
+    CAN_SYMBOL* crc_bin = dec_to_bin(txFrame->CRC);
+    CAN_SYMBOL* res =  concatenate_binary(id_bin, dlc_bin);
+    CAN_SYMBOL* res2 =  concatenate_binary(res, data_bin);
+    CAN_SYMBOL* res3 =  concatenate_binary(res2, crc_bin);
+    printFromPointer(res3);
 }
 
 int WinMain() {
