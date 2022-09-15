@@ -29,7 +29,7 @@ CAN_SYMBOL * dec_to_bin(uint64_t number) {
         number = number / 2;
     }
 
-    CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc((i+1)*sizeof(CAN_SYMBOL));
+    CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc((i+3)*sizeof(CAN_SYMBOL));
 
     binary[0] = i;
 
@@ -50,17 +50,19 @@ CAN_SYMBOL * concatenate_binary(CAN_SYMBOL * bin1, CAN_SYMBOL * bin2) {
 
     size_t new_size = size_bin1 + size_bin2 + 1;
 
-    CAN_SYMBOL * bin = (CAN_SYMBOL *) realloc(bin1, new_size);
-
+    CAN_SYMBOL* bin = (CAN_SYMBOL *) malloc((new_size+2)*sizeof(CAN_SYMBOL));
     bin[0] = new_size-1;
-
+    for(int i=1; i<=size_bin1; i++) {
+        bin[i] = *(bin1 + i);
+    }
     int j = 1;
-    for(int i = size_bin1+1; i < new_size; i++) {
-        bin[i] = *(bin2 + j);
+    for(int k = size_bin1+1; k < new_size; k++) {
+        bin[k] = *(bin2 + j);
         j++;
     }
 
-    // FREE MEMORY ALLOCATED TO BIN2
+    free(bin2);
+    free(bin1);
 
     return bin;
 }
