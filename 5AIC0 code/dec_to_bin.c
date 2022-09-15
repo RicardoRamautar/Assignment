@@ -11,20 +11,13 @@ typedef struct _can_frame {
   uint32_t CRC;
 } CAN_FRAME;
 
-CAN_SYMBOL * dec_to_bin(int number) {
-    int temp[32];
+CAN_SYMBOL * dec_to_bin(uint64_t number) {
+    uint64_t temp[64];
 
-    if (number == 0) {
-        CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc(sizeof(CAN_SYMBOL));
+    if (number == 0 || number == 1) {
+        CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc(2*sizeof(CAN_SYMBOL));
         binary[0] = 1;
-        binary[1] = DOMINANT;
-        return binary;
-    }
-
-    if (number == 1) {
-        CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc(sizeof(CAN_SYMBOL));
-        binary[0] = 1;
-        binary[1] = RECESSIVE;
+        binary[1] = number;
         return binary;
     }
 
@@ -35,9 +28,7 @@ CAN_SYMBOL * dec_to_bin(int number) {
         number = number / 2;
     }
 
-    CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc(i*sizeof(CAN_SYMBOL));
-
-    int bit = 0;
+    CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc((i+1)*sizeof(CAN_SYMBOL));
 
     binary[0] = i;
 
@@ -52,27 +43,6 @@ CAN_SYMBOL * dec_to_bin(int number) {
     return binary;
 }
 
-CAN_SYMBOL * concatenate_binary(CAN_SYMBOL * bin1, CAN_SYMBOL * bin2) {
-    int size_bin1 = *bin1;
-    int size_bin2 = *bin2;
-
-    size_t new_size = size_bin1 + size_bin2 + 1;
-
-    CAN_SYMBOL * bin = (CAN_SYMBOL *) realloc(bin1, new_size);
-
-    bin[0] = new_size-1;
-
-    int j = 1;
-    for(int i = size_bin1+1; i < new_size; i++) {
-        bin[i] = *(bin2 + j);
-        j++;
-    }
-
-    // FREE MEMORY ALLOCATED TO BIN2
-    
-    return bin;
-}
-
 void printFromPointer(CAN_SYMBOL * pointer) {
     int size = *pointer;
     for(int i = 1; i <= size; i++) {
@@ -83,10 +53,10 @@ void printFromPointer(CAN_SYMBOL * pointer) {
 
 void can_max_tx_frame(CAN_FRAME* txFrame)
 {
-    int id = txFrame->ID;
-    int dlc = txFrame->DLC;
-    int data = txFrame->Data;
-    int CRC = txFrame->CRC;
+    uint64_t id = txFrame->ID;
+    uint64_t dlc = txFrame->DLC;
+    uint64_t data = txFrame->Data;
+    uint64_t CRC = txFrame->CRC;
 
 
 }

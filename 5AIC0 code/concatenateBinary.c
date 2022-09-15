@@ -12,20 +12,13 @@ typedef struct _can_frame {
   uint32_t CRC;
 } CAN_FRAME;
 
-CAN_SYMBOL * dec_to_bin(int number) {
-    int temp[32];
+CAN_SYMBOL * dec_to_bin(uint64_t number) {
+    uint64_t temp[64];
 
-    if (number == 0) {
-        CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc(sizeof(CAN_SYMBOL));
+    if (number == 0 || number == 1) {
+        CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc(2*sizeof(CAN_SYMBOL));
         binary[0] = 1;
-        binary[1] = DOMINANT;
-        return binary;
-    }
-
-    if (number == 1) {
-        CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc(sizeof(CAN_SYMBOL));
-        binary[0] = 1;
-        binary[1] = RECESSIVE;
+        binary[1] = number;
         return binary;
     }
 
@@ -36,9 +29,7 @@ CAN_SYMBOL * dec_to_bin(int number) {
         number = number / 2;
     }
 
-    CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc(i*sizeof(CAN_SYMBOL));
-
-    int bit = 0;
+    CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc((i+1)*sizeof(CAN_SYMBOL));
 
     binary[0] = i;
 
@@ -83,7 +74,7 @@ void printFromPointer(CAN_SYMBOL * pointer) {
 }
 
 int WinMain() {
-    CAN_SYMBOL * res1 = dec_to_bin(8);
+    CAN_SYMBOL * res1 = dec_to_bin(40);
     printf("First array : ");
     printFromPointer(res1);
     CAN_SYMBOL * res2 = dec_to_bin(2);
