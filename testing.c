@@ -36,7 +36,7 @@ CAN_SYMBOL * dec_to_bin(int number) {
     for(int k=0;k<i;k++) {
         printf("%d", temp[k]);
     }
-    printf("\n \n");
+    printf("\n");
 
     CAN_SYMBOL * binary = (CAN_SYMBOL*) malloc((i-1)*sizeof(CAN_SYMBOL));
 
@@ -48,7 +48,6 @@ CAN_SYMBOL * dec_to_bin(int number) {
         } else {
             binary[i - j - 1] = RECESSIVE;
         }
-        printf("bit: %d at index: %d \n", binary[i-j-1], i-j-1);
     }
     printf("\n");
 
@@ -64,7 +63,7 @@ void printFromPointer(CAN_SYMBOL * pointer) {
 }
 
 int main() {
-    CAN_SYMBOL * res = dec_to_bin(0);
+    CAN_SYMBOL * res = dec_to_bin(15);
     printFromPointer(res);
 
 }
