@@ -144,9 +144,6 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
     }
 
     CAN_SYMBOL* res = (CAN_SYMBOL *) malloc(3*sizeof(CAN_SYMBOL));
-    // for(int k=1; k<=3; k++) {
-    //     res[k-1] = concat_message[msg_length+3-k];
-    // }
 
     int l = 0;
     for(int k=msg_length; k<msg_length+3; k++) {

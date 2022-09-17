@@ -133,38 +133,53 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
 void check(CAN_SYMBOL* crc, CAN_SYMBOL* ans) {
     int j = 1;
     for(int i=0; i<3; i++) {
-        if(crc[i] != ans[j]) {
+        if(i==0 && crc[0] == 0) {
+            continue;
+        } 
+        if (crc[i] != ans[j]) {
             printf("WRONG!!!\n");
             return;
         }
         j++;
     }
-    printf("CORECT\n");
+    printf("CORRECT\n");
 }
 
 int WinMain() {
-    int generators[4][4] = {
+    int generators[8][4] = {
         {1,1,0,1},
         {1,1,0,1},
         {1,1,0,1},
+        {1,1,0,1},
+        {1,1,0,1},
+        {1,1,1,1},
+        {1,0,0,1},
         {1,1,0,1}
     };
 
-    CAN_SYMBOL* integers[4] = {
+    CAN_SYMBOL* integers[8] = {
         dec_to_bin(556),
         dec_to_bin(35662),
         dec_to_bin(71540),
-        dec_to_bin(48994513)
+        dec_to_bin(48994513),
+        dec_to_bin(11185237),
+        dec_to_bin(11185237),
+        dec_to_bin(297555),
+        dec_to_bin(297555)
     };
 
-    CAN_SYMBOL* ans[4] = {
+    CAN_SYMBOL* ans[8] = {
         dec_to_bin(4),
         dec_to_bin(4),
         dec_to_bin(7),
-        dec_to_bin(6)
+        dec_to_bin(6),
+        dec_to_bin(5),
+        dec_to_bin(3),
+        dec_to_bin(5),
+        dec_to_bin(3)
     };
 
-    for(int i=0; i<4; i++) {
+    for(int i=0; i<8; i++) {
         CAN_SYMBOL* res = calc_crc(integers[i], generators[i]);
         check(res, ans[i]);
     }
