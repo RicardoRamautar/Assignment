@@ -90,7 +90,8 @@ void print_array(int msg[15], int x) {
     }
 }
 
-CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
+CAN_SYMBOL* calc_crc(CAN_SYMBOL* message) {
+    int generator[] = {1,1,0,0,0,1,0,1,1,0,0,1,1,0,0,1};
     int msg_length = message[0];
 
     int concat_message[msg_length+15];
@@ -131,7 +132,8 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
 
     CAN_SYMBOL* res = (CAN_SYMBOL *) malloc(15*sizeof(CAN_SYMBOL));
 
-    int l = 0;
+    int l = 1;
+    res[0] = 15;
     for(int k=msg_length; k<msg_length+15; k++) {
         res[l] = concat_message[k];
         l++;
@@ -140,12 +142,26 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
     return res;
 }
 
+int check_crc(CAN_SYMBOL* msg) {
+    CAN_SYMBOL* crc = calc_crc(msg);
+
+    for(int i=1; i<16; i++) {
+        if(crc[i] == 1) {
+            printf("INCORRECT CRC\n");
+            return 1;
+        }
+    }
+    printf("CORRECT CRC\n");
+    return 0;
+}
+
 int WinMain() {
-    int generator[] = {1,1,0,0,0,1,0,1,1,0,0,1,1,0,0,1};
     CAN_SYMBOL* message = dec_to_bin(18446744073709551606);
 
-    CAN_SYMBOL* crc = calc_crc(message, generator);
-    for(int i=0; i<15; i++) {
-        printf("%d", crc[i]);
-    }
+    CAN_SYMBOL* crc = calc_crc(message);
+    printFromPointer(crc);
+
+    CAN_SYMBOL* check_msg = concatenate_binary(message, crc);
+    printFromPointer(check_msg);
+    check_crc(check_msg);
 }
