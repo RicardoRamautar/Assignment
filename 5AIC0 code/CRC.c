@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 typedef enum {DOMINANT = 0, RECESSIVE = 1, UNSPECIFIED = 2} CAN_SYMBOL;
 typedef enum {SYNC_SEG, PROP_SEG, PHASE_SEG_1, PHASE_SEG_2} BIT_SEGMENT;
@@ -81,17 +82,20 @@ CAN_SYMBOL * concatenate_binary(CAN_SYMBOL * bin1, CAN_SYMBOL * bin2) {
     return bin;
 }
 
-void print_array(int msg[15], int x) {
-    if(x==0){
-        for(int i=0; i<11; i++) {
-            printf("%d", msg[i]);
-        }   
-    }
-}
+// void print_array(int msg[15], int x) {
+//     if(x==0){
+//         for(int i=0; i<11; i++) {
+//             printf("%d", msg[i]);
+//         }   
+//     }
+// }
 
-void calc_crc(CAN_SYMBOL* message, int generator[]) {
+CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
     int msg_length = message[0];
-    int concat_message[15] = {0};
+    // int concat_message[15] = {0};
+    int concat_message[msg_length+3];
+    memset( concat_message, 0, (msg_length+3)*sizeof(int) );
+    
     for(int i=1; i<=msg_length; i++) {
         concat_message[i-1] = message[i];
     }
@@ -101,7 +105,6 @@ void calc_crc(CAN_SYMBOL* message, int generator[]) {
     int gen_curr = 0;
     int temp = 0;
     int shift = 0;
-    int last = 0;
     while(curr < msg_length+3) {
         // printf("curr : %d \n", curr);
         // printf("gen_curr : %d \n", gen_curr);
@@ -122,8 +125,8 @@ void calc_crc(CAN_SYMBOL* message, int generator[]) {
         gen_curr++;
 
         if(curr >= msg_length+3) {
-            print_array(concat_message,0);
-            printf("\n");
+            // print_array(concat_message,0);
+            // printf("\n");
             break;
         }
 
@@ -134,9 +137,13 @@ void calc_crc(CAN_SYMBOL* message, int generator[]) {
         }
     }
 
+    CAN_SYMBOL* res = (CAN_SYMBOL *) malloc(3*sizeof(CAN_SYMBOL));
     for(int k=1; k<=3; k++) {
-        printf("%d", concat_message[msg_length+3-k]);
+        res[k-1] = concat_message[msg_length+3-k];
+        // printf("%d", concat_message[msg_length+3-k]);
     }
+
+    return res;
 }
 
 int WinMain() {
@@ -144,6 +151,8 @@ int WinMain() {
     CAN_SYMBOL* message = dec_to_bin(154);
     printFromPointer(message);
 
-    calc_crc(message, generator);
-
+    CAN_SYMBOL* crc = calc_crc(message, generator);
+    for(int i=0; i<3; i++) {
+        printf("%d", crc[i]);
+    }
 }
