@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #define MAX_BIT_SIZE 135
 
 typedef enum {DOMINANT = 0, RECESSIVE = 1, UNSPECIFIED = 2} CAN_SYMBOL;
@@ -74,6 +75,56 @@ CAN_SYMBOL * concatenate_binary(CAN_SYMBOL * bin1, CAN_SYMBOL * bin2) {
     return bin;
 }
 
+CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
+    int msg_length = message[0];
+
+    int concat_message[msg_length+15];
+    memset( concat_message, 0, (msg_length+15)*sizeof(int));
+    
+    for(int i=1; i<=msg_length+15; i++) {
+        concat_message[i-1] = message[i];
+        if(i>msg_length) {
+            concat_message[i-1] = 0;
+        }
+    }
+
+    int curr = 0;
+    int gen_curr = 0;
+    int temp = 0;
+    int shift = 0;
+    while(curr < msg_length+15) {
+        concat_message[curr]  ^= generator[gen_curr];
+
+        if(concat_message[curr] == 0 && shift == 0) {
+            temp++;
+        }else if(concat_message[curr] == 1 && shift == 0) {
+            shift = 1;
+        }
+
+        curr++;
+        gen_curr++;
+
+        if(gen_curr > 15) {
+            if(temp >= msg_length) {
+                break;
+            }
+            curr = temp;
+            gen_curr = 0;
+            shift = 0;
+        }
+    }
+
+    CAN_SYMBOL* res = (CAN_SYMBOL *) malloc(15*sizeof(CAN_SYMBOL));
+
+    int l = 0;
+    for(int k=msg_length; k<msg_length+15; k++) {
+        res[l] = concat_message[k];
+        l++;
+    }
+
+    return res;
+}
+
 void printFromPointer(CAN_SYMBOL * pointer) {
     int size = *pointer;
     for(int i = 1; i <= size; i++) {
@@ -82,7 +133,7 @@ void printFromPointer(CAN_SYMBOL * pointer) {
     printf("\n");
 }
 
-void can_mac_tx_frame(CAN_FRAME* txFrame){
+CAN_SYMBOL* can_mac_tx_frame(CAN_FRAME* txFrame){
     printFromPointer(dec_to_bin(txFrame->ID));
     printFromPointer(dec_to_bin(txFrame->DLC));
     printFromPointer(dec_to_bin(txFrame->Data));
@@ -95,12 +146,19 @@ void can_mac_tx_frame(CAN_FRAME* txFrame){
     CAN_SYMBOL* res =  concatenate_binary(id_bin, dlc_bin);
     CAN_SYMBOL* res2 =  concatenate_binary(res, data_bin);
     CAN_SYMBOL* res3 =  concatenate_binary(res2, crc_bin);
-    printFromPointer(res3);
+    return res3;
+    // printFromPointer(res3);
 }
 
 int WinMain() {
     CAN_FRAME frame = {10,20,43,52};
     CAN_FRAME * frame_pointer = &frame;
-    can_mac_tx_frame(frame_pointer);
+    CAN_SYMBOL* res = can_mac_tx_frame(frame_pointer);
+    printFromPointer(res);
+
+    int generator[] = {1,1,0,0,0,1,0,1,1,0,0,1,1,0,0,1};
+
+    CAN_SYMBOL* crc = calc_crc(res, generator);
+    printFromPointer(crc);
 }
 
