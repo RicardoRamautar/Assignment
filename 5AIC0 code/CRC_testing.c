@@ -143,22 +143,28 @@ void check(CAN_SYMBOL* crc, CAN_SYMBOL* ans) {
 }
 
 int WinMain() {
-    int generators[2][4] = {
+    int generators[4][4] = {
+        {1,1,0,1},
+        {1,1,0,1},
         {1,1,0,1},
         {1,1,0,1}
     };
 
-    CAN_SYMBOL* integers[2] = {
+    CAN_SYMBOL* integers[4] = {
         dec_to_bin(556),
-        dec_to_bin(35662)
+        dec_to_bin(35662),
+        dec_to_bin(71540),
+        dec_to_bin(48994513)
     };
 
-    CAN_SYMBOL* ans[2] = {
+    CAN_SYMBOL* ans[4] = {
         dec_to_bin(4),
-        dec_to_bin(4)
+        dec_to_bin(4),
+        dec_to_bin(7),
+        dec_to_bin(6)
     };
 
-    for(int i=0; i<2; i++) {
+    for(int i=0; i<4; i++) {
         CAN_SYMBOL* res = calc_crc(integers[i], generators[i]);
         check(res, ans[i]);
     }
