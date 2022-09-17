@@ -130,7 +130,7 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message) {
         }
     }
 
-    CAN_SYMBOL* res = (CAN_SYMBOL *) malloc(15*sizeof(CAN_SYMBOL));
+    CAN_SYMBOL* res = (CAN_SYMBOL *) malloc(16*sizeof(CAN_SYMBOL));
 
     int l = 1;
     res[0] = 15;

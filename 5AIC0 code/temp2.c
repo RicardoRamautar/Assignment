@@ -114,15 +114,29 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message) {
         }
     }
 
-    CAN_SYMBOL* res = (CAN_SYMBOL *) malloc(15*sizeof(CAN_SYMBOL));
+    CAN_SYMBOL* res = (CAN_SYMBOL *) malloc(16*sizeof(CAN_SYMBOL));
 
-    int l = 0;
+    int l = 1;
+    res[0] = 15;
     for(int k=msg_length; k<msg_length+15; k++) {
         res[l] = concat_message[k];
         l++;
     }
 
     return res;
+}
+
+int check_crc(CAN_SYMBOL* msg) {
+    CAN_SYMBOL* crc = calc_crc(msg);
+
+    for(int i=1; i<16; i++) {
+        if(crc[i] == 1) {
+            printf("INCORRECT CRC\n");
+            return 1;
+        }
+    }
+    printf("CORRECT CRC\n");
+    return 0;
 }
 
 void printFromPointer(CAN_SYMBOL * pointer) {
