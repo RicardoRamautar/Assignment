@@ -110,11 +110,10 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
         curr++;
         gen_curr++;
 
-        if(curr >= msg_length+3) {
-            break;
-        }
-
         if(gen_curr > 3) {
+            if(temp >= msg_length) {
+                break;
+            }
             curr = temp;
             gen_curr = 0;
             shift = 0;
@@ -122,9 +121,10 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
     }
 
     CAN_SYMBOL* res = (CAN_SYMBOL *) malloc(3*sizeof(CAN_SYMBOL));
-    for(int k=1; k<=3; k++) {
-        printf("%d", concat_message[msg_length+3-k]);
-        res[k-1] = concat_message[msg_length+3-k];
+    int l = 0;
+    for(int k=msg_length; k<msg_length+3; k++) {
+        res[l] = concat_message[k];
+        l++;
     }
 
     return res;
@@ -139,20 +139,10 @@ void check(CAN_SYMBOL* crc, CAN_SYMBOL* ans) {
         }
         j++;
     }
-    printf("CORECT");
+    printf("CORECT\n");
 }
 
 int WinMain() {
-    // int generator[] = {1,1,0,1};
-    // CAN_SYMBOL* message = dec_to_bin(154);
-
-    // CAN_SYMBOL* crc = calc_crc(message, generator);
-    // for(int i=0; i<3; i++) {
-    //     printf("%d", crc[i]);
-    // }
-
-    CAN_SYMBOL* message = dec_to_bin(154);
-
     int generators[2][4] = {
         {1,1,0,1},
         {1,1,0,1}

@@ -121,11 +121,11 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
         curr++;
         gen_curr++;
 
-        if(curr >= msg_length+4) {
-            print_array(concat_message,0);
-            printf("\n");
-            break;
-        }
+        // if(curr >= msg_length+4) {
+        //     print_array(concat_message,0);
+        //     printf("\n");
+        //     break;
+        // }
 
         if(gen_curr > 3) {
             if(temp >= msg_length) {
@@ -159,7 +159,7 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
 
 int WinMain() {
     int generator[] = {1,1,0,1};
-    CAN_SYMBOL* message = dec_to_bin(556);
+    CAN_SYMBOL* message = dec_to_bin(154);
     printFromPointer(message);
 
     CAN_SYMBOL* crc = calc_crc(message, generator);
