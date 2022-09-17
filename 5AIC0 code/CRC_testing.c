@@ -82,14 +82,6 @@ CAN_SYMBOL * concatenate_binary(CAN_SYMBOL * bin1, CAN_SYMBOL * bin2) {
     return bin;
 }
 
-// void print_array(int msg[15], int x) {
-//     if(x==0){
-//         for(int i=0; i<11; i++) {
-//             printf("%d", msg[i]);
-//         }   
-//     }
-// }
-
 CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
     int msg_length = message[0];
     // int concat_message[15] = {0};
@@ -106,12 +98,6 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
     int temp = 0;
     int shift = 0;
     while(curr < msg_length+3) {
-        // printf("curr : %d \n", curr);
-        // printf("gen_curr : %d \n", gen_curr);
-        // printf("temp : %d \n", temp);
-        // print_array(concat_message,0);
-        // printf("\n1101");
-        // printf("\n \n");
 
         concat_message[curr]  ^= generator[gen_curr];
 
@@ -125,8 +111,6 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
         gen_curr++;
 
         if(curr >= msg_length+3) {
-            // print_array(concat_message,0);
-            // printf("\n");
             break;
         }
 
@@ -140,7 +124,6 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
     CAN_SYMBOL* res = (CAN_SYMBOL *) malloc(3*sizeof(CAN_SYMBOL));
     for(int k=1; k<=3; k++) {
         res[k-1] = concat_message[msg_length+3-k];
-        // printf("%d", concat_message[msg_length+3-k]);
     }
 
     return res;
@@ -149,7 +132,6 @@ CAN_SYMBOL* calc_crc(CAN_SYMBOL* message, int generator[]) {
 int WinMain() {
     int generator[] = {1,1,0,1};
     CAN_SYMBOL* message = dec_to_bin(154);
-    printFromPointer(message);
 
     CAN_SYMBOL* crc = calc_crc(message, generator);
     for(int i=0; i<3; i++) {
