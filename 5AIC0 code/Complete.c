@@ -82,14 +82,6 @@ CAN_SYMBOL * concatenate_binary(CAN_SYMBOL * bin1, CAN_SYMBOL * bin2) {
     return bin;
 }
 
-void print_array(int msg[15], int x) {
-    if(x==0){
-        for(int i=0; i<11; i++) {
-            printf("%d", msg[i]);
-        }   
-    }
-}
-
 CAN_SYMBOL* calc_crc(CAN_SYMBOL* message) {
     int generator[] = {1,1,0,0,0,1,0,1,1,0,0,1,1,0,0,1};
     int msg_length = message[0];
@@ -155,6 +147,86 @@ int check_crc(CAN_SYMBOL* msg) {
     return 0;
 }
 
+CAN_SYMBOL* built_binary_frame(CAN_SYMBOL* id, CAN_SYMBOL* dlc, CAN_SYMBOL* data, int dlc_int) {
+    int total_length = 19 + dlc_int*8 + 28;
+    printf("\n%d \n", total_length);
+
+    CAN_SYMBOL* binary_frame = (CAN_SYMBOL *) malloc(sizeof(CAN_SYMBOL)*(total_length+5));
+
+    binary_frame[0] = total_length;                 // length of binary frame
+
+    binary_frame[1] = DOMINANT;                     // SOF
+
+    int bin_frame_idx = 2;
+
+    for(int i=0; i<(11-id[0]); i++) {               // fill DX with zeros up to 11 bits
+        binary_frame[bin_frame_idx] = DOMINANT;
+        bin_frame_idx++;
+    }
+
+    for(int i=1; i<=id[0]; i++) {                   // ID
+        binary_frame[bin_frame_idx] = id[i];
+        bin_frame_idx++;
+    }
+
+    binary_frame[bin_frame_idx] = DOMINANT;         // RTR
+    bin_frame_idx++;
+
+    binary_frame[bin_frame_idx] = DOMINANT;         // IDE
+    bin_frame_idx++;
+
+    binary_frame[bin_frame_idx] = DOMINANT;         // ro
+    bin_frame_idx++;
+
+    for(int i=0; i<(4-dlc[0]); i++) {               // fill DLC with zeros up to 4 bits
+        binary_frame[bin_frame_idx] = DOMINANT;
+        bin_frame_idx++;
+    }
+
+    for(int i=1; i<=dlc[0]; i++) {                   // DLC
+        binary_frame[bin_frame_idx] = dlc[i];
+        bin_frame_idx++;
+    }
+    
+    for(int i=0; i<(8*dlc_int-data[0]); i++) {      // fill DATA with zeros up to DCL*8 bits
+        binary_frame[bin_frame_idx] = DOMINANT;
+        bin_frame_idx++;
+    }
+
+    for(int i=1; i<=data[0]; i++) {                   // DATA
+        binary_frame[bin_frame_idx] = data[i];
+        bin_frame_idx++;
+    }
+
+    CAN_SYMBOL* crc = calc_crc(binary_frame);
+
+    for(int i=0; i<(15-crc[0]); i++) {               // fill CRC with zeros up to 15 bits
+        binary_frame[bin_frame_idx] = DOMINANT;
+        bin_frame_idx++;
+    }
+
+    for(int i=1; i<=crc[0]; i++) {                   // CRC
+        binary_frame[bin_frame_idx] = crc[i];
+        bin_frame_idx++;
+    }
+
+    binary_frame[bin_frame_idx] = RECESSIVE;         // CRC delimiter bit
+    bin_frame_idx++;
+
+    binary_frame[bin_frame_idx] = DOMINANT;         // ACK field 1
+    bin_frame_idx++;
+
+    binary_frame[bin_frame_idx] = RECESSIVE;         // ACK field 2
+    bin_frame_idx++;
+
+    for(int i=0; i<10; i++) {
+        binary_frame[bin_frame_idx] = RECESSIVE;     // EOF + INT
+        bin_frame_idx++;
+    }
+
+    return binary_frame;
+}
+
 void can_max_tx_frame(CAN_FRAME* txFrame)
 {
 	printFromPointer(dec_to_bin(txFrame->ID));
@@ -166,16 +238,15 @@ void can_max_tx_frame(CAN_FRAME* txFrame)
     CAN_SYMBOL* dlc_bin = dec_to_bin(txFrame->DLC);
     CAN_SYMBOL* data_bin = dec_to_bin(txFrame->Data);
     CAN_SYMBOL* crc_bin = dec_to_bin(txFrame->CRC);
-    CAN_SYMBOL* res =  concatenate_binary(id_bin, dlc_bin);
-    CAN_SYMBOL* res2 =  concatenate_binary(res, data_bin);
-    CAN_SYMBOL* res3 =  concatenate_binary(res2, crc_bin);
+
+    CAN_SYMBOL* res = built_binary_frame(id_bin, dlc_bin, data_bin, txFrame->DLC);
     
-	printFromPointer(res3);
+	printFromPointer(res);
 
 }
 
-int WinMain() {
-    CAN_FRAME frame = {10,20,43,52};
+int winMain() {
+    CAN_FRAME frame = {10,1,43,52};
     CAN_FRAME * frame_pointer = &frame;
     can_max_tx_frame(frame_pointer);
 }
