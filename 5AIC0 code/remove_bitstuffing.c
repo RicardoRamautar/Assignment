@@ -186,6 +186,13 @@ void test(int i) {
         CAN_SYMBOL* result = remove_bitstuffing(arr);
         checkEqual(result, solution);
     }
+
+    if(i==7) {
+        CAN_SYMBOL arr[16] = {15,0,0,0,0,0,1,1,1,1,1,0,1,0,0,0};
+        CAN_SYMBOL solution[14] = {13,0,0,0,0,0,1,1,1,1,1,0,0,0};
+        CAN_SYMBOL* result = remove_bitstuffing(arr);
+        checkEqual(result, solution);
+    }
 }
 
 int main() {
@@ -195,6 +202,7 @@ int main() {
     test(4);
     test(5);
     test(6);
+    test(7);
 
     // CAN_SYMBOL* res = remove_bitstuffing_scanf();
     // printFromPointer(res);
