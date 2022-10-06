@@ -165,12 +165,36 @@ void test(int i) {
         CAN_SYMBOL* res = remove_bitstuffing(eof);
         printFromPointer(res);
     }
+
+    if(i==4) {
+        CAN_SYMBOL arr[16] = {15,0,1,1,0,0,0,0,0,1,1,1,1,0,1,1};
+        CAN_SYMBOL solution[15] = {14,0,1,1,0,0,0,0,0,1,1,1,0,1,1};
+        CAN_SYMBOL* result = remove_bitstuffing(arr);
+        checkEqual(result, solution);
+    }
+
+    if(i==5) {
+        CAN_SYMBOL arr[18] = {17,0,0,0,0,0,1,0,0,0,0,0,1,1,1,1,1,0};
+        CAN_SYMBOL solution[15] = {14,0,0,0,0,0,0,0,0,0,0,1,1,1,1};
+        CAN_SYMBOL* result = remove_bitstuffing(arr);
+        checkEqual(result, solution);
+    }
+
+    if(i==6) {
+        CAN_SYMBOL arr[19] = {18,1,1,1,1,1,0,0,0,0,0,1,1,0,1,1,1,1,1};
+        CAN_SYMBOL solution[17] = {16,1,1,1,1,1,0,0,0,0,1,0,1,1,1,1,1};
+        CAN_SYMBOL* result = remove_bitstuffing(arr);
+        checkEqual(result, solution);
+    }
 }
 
 int main() {
     test(1);
     test(2);
     test(3);
+    test(4);
+    test(5);
+    test(6);
 
     // CAN_SYMBOL* res = remove_bitstuffing_scanf();
     // printFromPointer(res);
