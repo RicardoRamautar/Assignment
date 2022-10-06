@@ -127,6 +127,9 @@ CAN_SYMBOL* remove_bitstuffing_scanf() {
             printf("Enter a bit: "); scanf("%d", &rx); 
             if(rx == 1) eof_check++; else eof_check=0;
 
+            //  For testing: when inputting 2, function will stop and return array
+            if(rx == 2) break;
+
             //  Set counter back to 1, skip a bit, update "prev"
             counter = 1;
             i++;
@@ -196,15 +199,15 @@ void test(int i) {
 }
 
 int main() {
-    test(1);
-    test(2);
-    test(3);
-    test(4);
-    test(5);
-    test(6);
-    test(7);
+    // test(1);
+    // test(2);
+    // test(3);
+    // test(4);
+    // test(5);
+    // test(6);
+    // test(7);
 
-    // CAN_SYMBOL* res = remove_bitstuffing_scanf();
-    // printFromPointer(res);
+    CAN_SYMBOL* res = remove_bitstuffing_scanf();
+    printFromPointer(res);
 
 }
