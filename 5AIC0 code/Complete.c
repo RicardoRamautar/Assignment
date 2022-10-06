@@ -229,11 +229,6 @@ CAN_SYMBOL* built_binary_frame(CAN_SYMBOL* id, CAN_SYMBOL* dlc, CAN_SYMBOL* data
 
 void can_max_tx_frame(CAN_FRAME* txFrame)
 {
-	printFromPointer(dec_to_bin(txFrame->ID));
-	printFromPointer(dec_to_bin(txFrame->DLC));
-	printFromPointer(dec_to_bin(txFrame->Data));
-	printFromPointer(dec_to_bin(txFrame->CRC));
-
     CAN_SYMBOL* id_bin = dec_to_bin(txFrame->ID);
     CAN_SYMBOL* dlc_bin = dec_to_bin(txFrame->DLC);
     CAN_SYMBOL* data_bin = dec_to_bin(txFrame->Data);
