@@ -36,9 +36,9 @@ CAN_SYMBOL* remove_bitstuffing(CAN_SYMBOL* arr) {
     int length_counter = 1;
     int eof_check = arr[1];
 
-    CAN_SYMBOL* eof_detected = (CAN_SYMBOL* ) malloc(2*sizeof(CAN_SYMBOL));
-    eof_detected[0] = 1;
-    eof_detected[1] = 0;
+    // CAN_SYMBOL* eof_detected = (CAN_SYMBOL* ) malloc(2*sizeof(CAN_SYMBOL));
+    // eof_detected[0] = 1;
+    // eof_detected[1] = 0;
 
     CAN_SYMBOL new[135];
 
@@ -47,7 +47,13 @@ CAN_SYMBOL* remove_bitstuffing(CAN_SYMBOL* arr) {
 
     for(int i=2; i<=arr[0]; i++) {
         if(arr[i] == 1) eof_check++; else eof_check=0;
-        if(eof_check >= 7) return eof_detected;
+        if(eof_check >= 7) {
+            for(int j=1; j<=6; j++) {
+                length_counter+j++;
+                new[length_counter] = 1;
+            }
+            break;
+        }
 
         if(arr[i] == prev) {
             counter++;
@@ -86,17 +92,17 @@ CAN_SYMBOL* remove_bitstuffing_scanf() {
     printf("Enter a bit: "); scanf("%d", &rx); 
 
     //  initialize variables
-    CAN_SYMBOL prev = rx, eof_check = rx, temp[135];
+    CAN_SYMBOL prev = rx, eof_check = rx, temp[136];
     int counter = 1, length_counter = 1;
 
     //  Array that is returned when EOF has been detected
-    CAN_SYMBOL* eof_detected = (CAN_SYMBOL* ) malloc(2*sizeof(CAN_SYMBOL));
-    eof_detected[0] = 1; eof_detected[1] = 0;
+    // CAN_SYMBOL* eof_detected = (CAN_SYMBOL* ) malloc(2*sizeof(CAN_SYMBOL));
+    // eof_detected[0] = 1; eof_detected[1] = 0;
 
     //  Insert first element into temporary array
     temp[1] = rx;
 
-    for(int i=1; i<135; i++) {
+    for(int i=1; i<=135; i++) {
         printf("Enter a bit: ");  scanf("%d", &rx); 
 
         // For testing : when inputting 2, function will stop and return array
@@ -106,7 +112,12 @@ CAN_SYMBOL* remove_bitstuffing_scanf() {
         if(rx == 1) eof_check++; else eof_check=0;
 
         //  Check if EOF has been received
-        if(eof_check >= 7) return eof_detected;
+        if(eof_check >= 7) {
+            for(int j=1; j<=4; j++) {
+                temp[length_counter+i] = 1;
+            }
+            break;
+        }
 
         //  Increment counter if curr==prev, otherwise set counter to 1 and update "prev"
         if(rx == prev) {
@@ -132,7 +143,7 @@ CAN_SYMBOL* remove_bitstuffing_scanf() {
 
             //  Set counter back to 1, skip a bit, update "prev"
             counter = 1;
-            i++;
+            // i++;
             prev = !prev;
         }
     }
@@ -196,6 +207,12 @@ void test(int i) {
         CAN_SYMBOL* result = remove_bitstuffing(arr);
         checkEqual(result, solution);
     }
+
+    if(i==8) {
+        CAN_SYMBOL arr[60] = {59,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1};
+        CAN_SYMBOL* result = remove_bitstuffing(arr);
+        printFromPointer(result);
+    }
 }
 
 int main() {
@@ -206,8 +223,9 @@ int main() {
     // test(5);
     // test(6);
     // test(7);
+    test(8);
 
-    CAN_SYMBOL* res = remove_bitstuffing_scanf();
-    printFromPointer(res);
+    // CAN_SYMBOL* res = remove_bitstuffing_scanf();
+    // printFromPointer(res);
 
 }
